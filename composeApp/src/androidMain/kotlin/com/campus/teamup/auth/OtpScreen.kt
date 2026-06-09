@@ -48,6 +48,7 @@ import com.campus.teamup.ui.theme.ButtonColor
 import com.campus.teamup.ui.theme.IconColor
 import org.koin.androidx.compose.koinViewModel
 
+
 @Composable
 fun OtpScreenLandingPage(
     navController: NavHostController,
