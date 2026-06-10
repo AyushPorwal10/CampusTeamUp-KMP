@@ -27,7 +27,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.datastore.preferences.core)
             implementation(libs.gitlive.firebase.auth)
-            implementation(libs.gitlive.firestore)
             implementation(libs.koin.core)
         }
         commonTest.dependencies {

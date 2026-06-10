@@ -25,6 +25,7 @@ kotlin {
             implementation(libs.navigation.compose)
         }
         commonMain.dependencies {
+            implementation(libs.gitlive.firestore)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)

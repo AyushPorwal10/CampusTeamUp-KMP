@@ -1,4 +1,4 @@
-package com.feature.auth.service
+package com.campus.teamup.service
 
 import com.feature.auth.contract.UserProfileService
 import dev.gitlive.firebase.Firebase
