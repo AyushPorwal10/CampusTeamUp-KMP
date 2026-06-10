@@ -28,11 +28,6 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("Authentication") {
-    dependencySubstitution {
-        substitute(module("com.feature.auth:shared")).using(project(":shared"))
-    }
-}
-
 include(":composeApp")
 include(":shared")
+include(":feature:auth")
