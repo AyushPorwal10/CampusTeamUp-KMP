@@ -28,6 +28,7 @@ fun Authentication(onOtpVerified: () -> Unit) {
             LoginScreenLandingPage(navController = navController,
                 authViewModel, )
         }
+
         composable("otp/{verificationId}/{phone}") { backStackEntry ->
             val verificationId = backStackEntry.arguments?.getString("verificationId") ?: ""
             val phone = backStackEntry.arguments?.getString("phone") ?: ""
