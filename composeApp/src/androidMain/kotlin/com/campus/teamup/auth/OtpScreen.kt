@@ -46,16 +46,16 @@ import com.campus.teamup.ui.components.FloatingBubbles
 import com.campus.teamup.ui.theme.BackgroundGradientColor
 import com.campus.teamup.ui.theme.ButtonColor
 import com.campus.teamup.ui.theme.IconColor
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun OtpScreenLandingPage(
     navController: NavHostController,
+    viewModel: AuthViewModel,
     verificationId: String,
-    phone: String
+    phone: String,
+    onOtpVerified: () -> Unit
 ) {
-    val viewModel: AuthViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -63,6 +63,7 @@ fun OtpScreenLandingPage(
         when (uiState) {
             is AuthUiState.Success -> {
                 Toast.makeText(context, "OTP Verified!", Toast.LENGTH_SHORT).show()
+                onOtpVerified()
             }
             is AuthUiState.Error -> {
                 Toast.makeText(context, (uiState as AuthUiState.Error).message, Toast.LENGTH_SHORT).show()

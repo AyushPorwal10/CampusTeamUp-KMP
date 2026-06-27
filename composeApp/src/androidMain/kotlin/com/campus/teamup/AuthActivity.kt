@@ -1,15 +1,14 @@
 package com.campus.teamup
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.feature.auth.util.ActivityProvider
 import org.koin.android.ext.android.inject
 
-class MainActivity : ComponentActivity() {
+class AuthActivity : ComponentActivity() {
 
     private val activityProvider: ActivityProvider by inject()
 
@@ -17,7 +16,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            App()
+            Authentication{
+                val intent = Intent(this, DashboardActivity::class.java)
+                this.startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -27,8 +30,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
-}

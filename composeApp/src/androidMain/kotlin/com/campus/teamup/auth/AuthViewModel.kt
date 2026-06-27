@@ -27,6 +27,14 @@ class AuthViewModel(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState = _uiState.asStateFlow()
 
+    init {
+         testing()
+    }
+
+    fun testing(){
+
+    }
+
     fun sendOtp(phone: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -55,5 +63,9 @@ class AuthViewModel(
 
     fun resetError() {
         _uiState.value = AuthUiState.Idle
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 }

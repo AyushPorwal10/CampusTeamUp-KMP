@@ -43,12 +43,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.campus.teamup.ui.components.FloatingBubbles
 import com.campus.teamup.ui.theme.BackgroundGradientColor
-import com.campus.teamup.ui.theme.ButtonColor
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreenLandingPage(navController: NavHostController) {
-    val viewModel: AuthViewModel = koinViewModel()
+fun LoginScreenLandingPage(
+    navController: NavHostController,
+    viewModel: AuthViewModel
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -102,7 +102,11 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (phone.length == 10) onSendOtp(phone)
-                        else Toast.makeText(context, "Enter a valid 10-digit number", Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(
+                            context,
+                            "Enter a valid 10-digit number",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -112,110 +116,110 @@ fun LoginScreen(
                     shape = RoundedCornerShape(16.dp),
                     contentPadding = PaddingValues(0.dp),
                 ) {
-                        if (uiState is AuthUiState.Loading) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Continue",
-                                color = Color.White,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                }
-            }
-        ) { contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding)) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 80.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "Login or signup",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2D3748)
-                    )
-                    Text(
-                        text = "Enter your phone number to continue",
-                        fontSize = 14.sp,
-                        color = Color(0xFF718096)
-                    )
-                }
-
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "Phone Number",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF2D3748)
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .border(
-                                width = 1.5.dp,
-                                color = if (phone.isNotEmpty()) Color(0xFF667eea) else Color(
-                                    0xFFE2E8F0
-                                ),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
+                    if (uiState is AuthUiState.Loading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    } else {
                         Text(
-                            text = "🇮🇳 +91",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF2D3748)
-                        )
-
-                        VerticalDivider(
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(1.dp),
-                            color = Color(0xFFE2E8F0)
-                        )
-
-                        BasicTextField(
-                            value = phone,
-                            onValueChange = {
-                                if (it.length <= 10 && it.all { c -> c.isDigit() }) phone = it
-                            },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            singleLine = true,
-                            textStyle = TextStyle(
-                                fontSize = 16.sp,
-                                color = Color(0xFF2D3748)
-                            ),
-                            decorationBox = { innerTextField ->
-                                if (phone.isEmpty()) {
-                                    Text(
-                                        text = "Eg: 9876543210",
-                                        fontSize = 16.sp,
-                                        color = Color(0xFFB0BEC5)
-                                    )
-                                }
-                                innerTextField()
-                            },
-                            modifier = Modifier.weight(1f)
+                            text = "Continue",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
             }
-        }
+        ) { contentPadding ->
+            Box(modifier = Modifier.padding(contentPadding)) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "Login or signup",
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF2D3748)
+                        )
+                        Text(
+                            text = "Enter your phone number to continue",
+                            fontSize = 14.sp,
+                            color = Color(0xFF718096)
+                        )
+                    }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "Phone Number",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF2D3748)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .border(
+                                    width = 1.5.dp,
+                                    color = if (phone.isNotEmpty()) Color(0xFF667eea) else Color(
+                                        0xFFE2E8F0
+                                    ),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .background(Color.White, RoundedCornerShape(16.dp))
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = "🇮🇳 +91",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF2D3748)
+                            )
+
+                            VerticalDivider(
+                                modifier = Modifier
+                                    .height(24.dp)
+                                    .width(1.dp),
+                                color = Color(0xFFE2E8F0)
+                            )
+
+                            BasicTextField(
+                                value = phone,
+                                onValueChange = {
+                                    if (it.length <= 10 && it.all { c -> c.isDigit() }) phone = it
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                singleLine = true,
+                                textStyle = TextStyle(
+                                    fontSize = 16.sp,
+                                    color = Color(0xFF2D3748)
+                                ),
+                                decorationBox = { innerTextField ->
+                                    if (phone.isEmpty()) {
+                                        Text(
+                                            text = "Eg: 9876543210",
+                                            fontSize = 16.sp,
+                                            color = Color(0xFFB0BEC5)
+                                        )
+                                    }
+                                    innerTextField()
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
