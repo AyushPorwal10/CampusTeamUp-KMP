@@ -44,7 +44,7 @@ class FirebaseOtpService(
                     }
 
                     override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                        // auto-verified on emulator — not handled in two-step flow
+                        // instant verification not used — user always enters OTP manually
                     }
 
                     override fun onVerificationFailed(e: FirebaseException) {

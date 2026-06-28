@@ -19,8 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,28 +45,35 @@ import com.campus.teamup.ui.theme.BackgroundGradientColor
 import com.campus.teamup.ui.theme.ButtonColor
 import com.campus.teamup.ui.theme.IconColor
 
-
 @Composable
 fun OtpScreenLandingPage(
     navController: NavHostController,
     viewModel: AuthViewModel,
-    verificationId: String,
-    phone: String,
     onOtpVerified: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val phone by viewModel.phone.collectAsState()
+    val verificationId by viewModel.verificationId.collectAsState()
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                // Resend OTP: refresh OTP screen with new verificationId
+                is AuthEvent.NavigateToOtp -> {
+                    navController.navigate("otp") {
+                        popUpTo("otp") { inclusive = true }
+                    }
+                }
+                is AuthEvent.ShowError -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     LaunchedEffect(uiState) {
-        when (uiState) {
-            is AuthUiState.Success -> {
-                Toast.makeText(context, "OTP Verified!", Toast.LENGTH_SHORT).show()
-                onOtpVerified()
-            }
-            is AuthUiState.Error -> {
-                Toast.makeText(context, (uiState as AuthUiState.Error).message, Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
+        if (uiState is AuthUiState.Success) {
+            Toast.makeText(context, "OTP Verified!", Toast.LENGTH_SHORT).show()
+            onOtpVerified()
         }
     }
 
@@ -121,9 +126,7 @@ fun OtpScreen(
                 ) {
                     Button(
                         onClick = { if (otpValue.length == 6) onVerifyOtp(otpValue) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                         contentPadding = PaddingValues(0.dp),
@@ -142,28 +145,15 @@ fun OtpScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             if (uiState is AuthUiState.Loading) {
-                                CircularProgressIndicator(
-                                    color = Color.White,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                             } else {
-                                Text(
-                                    text = "Verify OTP",
-                                    color = Color.White,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
+                                Text(text = "Verify OTP", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
 
                     TextButton(onClick = onResendOtp) {
-                        Text(
-                            text = "Resend OTP",
-                            color = IconColor,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        Text(text = "Resend OTP", color = IconColor, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
@@ -176,14 +166,6 @@ fun OtpScreen(
                         .padding(top = 48.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    IconButton(onClick = onBack) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                            contentDescription = "Back",
-//                            tint = Color(0xFF2D3748)
-//                        )
-                    }
-
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "Verify OTP",
@@ -191,11 +173,15 @@ fun OtpScreen(
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2D3748)
                         )
-                        Text(
-                            text = "Sent to +91 $phone",
-                            fontSize = 14.sp,
-                            color = Color(0xFF718096)
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(text = "Sent to +91 $phone", fontSize = 14.sp, color = Color(0xFF718096))
+                            TextButton(onClick = onBack, contentPadding = PaddingValues(0.dp)) {
+                                Text(text = "Edit", fontSize = 14.sp, color = IconColor, fontWeight = FontWeight.SemiBold)
+                            }
+                        }
                     }
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -216,10 +202,7 @@ fun OtpScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     repeat(6) { index ->
-                                        OtpBox(
-                                            char = otpValue.getOrNull(index),
-                                            isCurrent = otpValue.length == index
-                                        )
+                                        OtpBox(char = otpValue.getOrNull(index), isCurrent = otpValue.length == index)
                                     }
                                 }
                             }

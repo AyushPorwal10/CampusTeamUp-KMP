@@ -2,5 +2,10 @@
     <string name="app_name">CampusTeamUpKMP</string>
     <string name="have_a_team">Have a team?</string>
     <string name="need_memebers">Need members?</string>
-    <string name="looking_for_a_team1">Looking to join \na team</string>
+    <string name="looking_for_a_team1">Looking to join\na team</string>
+    <string name="founders_hub">Founders Hub</string>
+    <string name="browse_project">Browse Projects</string>
+    <string name="form_a_team_message">Form a team for ICPC\nor other coding contests.</string>
+    <string name="lets_code_together">Lets Code Together</string>
+    <string name="cp_teamup">CP TeamUp</string>
 </resources>

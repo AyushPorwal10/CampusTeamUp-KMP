@@ -23,7 +23,7 @@ class DashboardViewModel(
     fun loadDashboard() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            runCatching { getDashboardLayout() }
+            runCatching { getDashboardLayout() } // TODO check if Erro handling can be moved to usecase
                 .onSuccess { _uiState.value = UiState.Success(it) }
                 .onFailure { _uiState.value = UiState.Error(it.message ?: "Failed to load dashboard") }
         }

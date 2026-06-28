@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,27 +51,21 @@ fun LoginScreenLandingPage(
     viewModel: AuthViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val initialPhone by viewModel.phone.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is AuthUiState.OtpSent -> {
-                val state = uiState as AuthUiState.OtpSent
-                navController.navigate("otp/${state.verificationId}/${state.phone}")
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is AuthEvent.NavigateToOtp -> navController.navigate("otp")
+                is AuthEvent.ShowError -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
-
-            is AuthUiState.Error -> {
-                Toast.makeText(context, (uiState as AuthUiState.Error).message, Toast.LENGTH_SHORT)
-                    .show()
-                viewModel.resetError()
-            }
-
-            else -> {}
         }
     }
 
     LoginScreen(
         uiState = uiState,
+        initialPhone = initialPhone,
         onSendOtp = { phone -> viewModel.sendOtp(phone) }
     )
 }
@@ -78,10 +73,19 @@ fun LoginScreenLandingPage(
 @Composable
 fun LoginScreen(
     uiState: AuthUiState,
+    initialPhone: String,
     onSendOtp: (String) -> Unit
 ) {
     val context = LocalContext.current
-    var phone by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf(initialPhone) }
+    var prevLength by remember { mutableIntStateOf(initialPhone.length) }
+
+    LaunchedEffect(phone) {
+        if (phone.length == 10 && prevLength < 10) {
+            onSendOtp(phone)
+        }
+        prevLength = phone.length
+    }
 
     Box(
         modifier = Modifier
@@ -102,11 +106,7 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (phone.length == 10) onSendOtp(phone)
-                        else Toast.makeText(
-                            context,
-                            "Enter a valid 10-digit number",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        else Toast.makeText(context, "Enter a valid 10-digit number", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,10 +117,7 @@ fun LoginScreen(
                     contentPadding = PaddingValues(0.dp),
                 ) {
                     if (uiState is AuthUiState.Loading) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                     } else {
                         Text(
                             text = "Continue",
@@ -133,7 +130,6 @@ fun LoginScreen(
             }
         ) { contentPadding ->
             Box(modifier = Modifier.padding(contentPadding)) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -143,7 +139,7 @@ fun LoginScreen(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            text = "Login or signup",
+                            text = "Login or Signup",
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2D3748)
@@ -169,9 +165,7 @@ fun LoginScreen(
                                 .height(56.dp)
                                 .border(
                                     width = 1.5.dp,
-                                    color = if (phone.isNotEmpty()) Color(0xFF667eea) else Color(
-                                        0xFFE2E8F0
-                                    ),
+                                    color = if (phone.isNotEmpty()) Color(0xFF667eea) else Color(0xFFE2E8F0),
                                     shape = RoundedCornerShape(16.dp)
                                 )
                                 .background(Color.White, RoundedCornerShape(16.dp))
@@ -187,9 +181,7 @@ fun LoginScreen(
                             )
 
                             VerticalDivider(
-                                modifier = Modifier
-                                    .height(24.dp)
-                                    .width(1.dp),
+                                modifier = Modifier.height(24.dp).width(1.dp),
                                 color = Color(0xFFE2E8F0)
                             )
 
@@ -200,17 +192,10 @@ fun LoginScreen(
                                 },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
-                                textStyle = TextStyle(
-                                    fontSize = 16.sp,
-                                    color = Color(0xFF2D3748)
-                                ),
+                                textStyle = TextStyle(fontSize = 16.sp, color = Color(0xFF2D3748)),
                                 decorationBox = { innerTextField ->
                                     if (phone.isEmpty()) {
-                                        Text(
-                                            text = "Eg: 9876543210",
-                                            fontSize = 16.sp,
-                                            color = Color(0xFFB0BEC5)
-                                        )
+                                        Text(text = "Eg: 9876543210", fontSize = 16.sp, color = Color(0xFFB0BEC5))
                                     }
                                     innerTextField()
                                 },
